@@ -1,0 +1,5 @@
+compile_commands.json
+viewmd
+.cache
+src/*.o
+src/resources.c
