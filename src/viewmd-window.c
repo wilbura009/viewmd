@@ -92,6 +92,8 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
   {
     gchar *html_content;
     html_content = convert_md_to_html (path);
+    WebKitSettings *settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE, NULL,
+        "auto-load-images", TRUE, NULL);
 
     WebKitUserContentManager *manager = webkit_user_content_manager_new ();
     WebKitUserStyleSheet *style_sheet;
@@ -108,7 +110,9 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
 
     // Load the html content into the webview
     WebKitWebView *webView = WEBKIT_WEB_VIEW (webkit_web_view_new_with_user_content_manager (manager));
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView)), TRUE);
+
+    // Set the webview settings
+    webkit_web_view_set_settings (webView, settings);
     webkit_web_view_load_html (webView, html_content, NULL);
     gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(webView));
 
