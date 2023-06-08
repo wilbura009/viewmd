@@ -62,7 +62,7 @@ file_changed (GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonito
     WebKitUserContentManager *manager = webkit_user_content_manager_new ();
     WebKitUserStyleSheet *style_sheet;
 
-    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/css/webkit.css", g_get_home_dir ());
+    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/data/webkit.css", g_get_home_dir ());
     GFile *file_css = g_file_new_for_path (path_css);
     gchar *css_content;
     g_file_load_contents (file_css, NULL, &css_content, NULL, NULL, NULL);
@@ -99,7 +99,7 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
     WebKitUserStyleSheet *style_sheet;
 
     // Get the path to the .css file located in the user's home directory
-    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/css/webkit.css", g_get_home_dir ());
+    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/data/webkit.css", g_get_home_dir ());
     GFile *file_css = g_file_new_for_path (path_css);
     gchar *css_content;
     g_file_load_contents (file_css, NULL, &css_content, NULL, NULL, NULL);
