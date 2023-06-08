@@ -94,10 +94,14 @@ p {
 
 code {
   font-family: var(--code-font-family);
-  background: var(--color-code-background);
+  background: var(--source-code-background);
   font-size: 14px;
   padding: 4px;
   border-radius: 4px;
+}
+
+img {
+  max-width: 50%;
 }
 
 a {
