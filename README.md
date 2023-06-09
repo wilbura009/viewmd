@@ -42,18 +42,14 @@ Note: The makefile uses `apt` to install dependencies.
 
 The makefile includes rules for a few types of installations.
 
-| Invocation                  | Description                                                                      |
-|-----------------------------|----------------------------------------------------------------------------------|
-| `make install-dependencies` | Install only the dependencies. Nothing else.                                     |
-| `make install`              | Install dependencies, compile project, and place the binary in `/usr/local/bin/` |
-| `make install-noroot`       | Install dependencies, compile project, and place the binary in `$(HOME)/.bin`    |
+* `make install-dependencies` -- Install only the dependencies, nothing else.
+* `make install`              -- Install dependencies, compile project, and place the binary in `/usr/local/bin/`
+* `make install-noroot`       -- Install dependencies, compile project, and place the binary in `$(HOME)/.bin`
 
 ## Uninstalling
 
-| Invocation              | Description                                                |
-|-------------------------|------------------------------------------------------------|
-| `make uninstall`        | Remove `/usr/local/bin/viewmd` and relevant .config files. |
-| `make uninstall-noroot` | Remove `$(HOME)/.bin/viewmd` and relevant .config files.   |
+* `make uninstall` -- Remove `/usr/local/bin/viewmd` and relevant .config files.
+* `make uninstall-noroot` -- Remove `$(HOME)/.bin/viewmd` and relevant .config files.
 
 ## Usage
 
@@ -67,4 +63,8 @@ After installation you may call `viewmd` from anywhere as seen above.
 
 ## Roadmap
 
-See [issues](https://github.com/wilbura009/vim_viewmd/issues)
+See [Issues](https://github.com/wilbura009/vim_viewmd/issues)
+
+## Contributing
+
+See [Contributing](CONTRIBUTING.md)
