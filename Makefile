@@ -51,36 +51,51 @@ TEST_INPUT = test/input/ipsum.md
 all: $(TARGET)
 
 quiet-all:
-	@echo "[2: BUILDING $(TARGET)] ==========================="
+	@echo "[3: BUILDING $(TARGET)] ============================================="
 	@$(MAKE) -s all > /dev/null 2>&1 && echo "  - [OK]: $(TARGET)" || echo "  - [FAILED]: $(TARGET)"
+	@echo
 
 # TODO: Git clone in opt instead
 install: install-dependencies quiet-all
-	@echo "[2: INSTALLING $(TARGET)] ========================="
+	@echo "[4: INSTALLING $(TARGET)] ==========================================="
 	@mkdir -p $(VIEWMD_CONFIG_DIR) > /dev/null 2>&1 && echo "  - [OK]: mkdir -p $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: mkdir -p $(VIEWMD_CONFIG_DIR)"
 	@cp -r $(SRC_DATA_DIR) $(VIEWMD_CONFIG_DIR) && echo "  - [OK]: cp -r $(SRC_DATA_DIR) -> $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: cp -r $(SRC_DATA_DIR) -> $(VIEWMD_CONFIG_DIR)"
 	@sudo cp $(TARGET) $(USR_LOCAL_BIN_DIR) && echo "  - [OK]: cp $(TARGET) -> $(USR_LOCAL_BIN_DIR)/$(TARGET)" || echo "  - [FAILED]: cp $(TARGET) -> $(USR_LOCAL_BIN_DIR)/$(TARGET)"
+	@echo
 
 install-noroot: install-dependencies quiet-all
-	@echo "[2: INSTALLING $(TARGET)] ========================="
+	@echo "[3: INSTALLING $(TARGET)] ==========================================="
 	@mkdir -p $(VIEWMD_CONFIG_DIR) > /dev/null 2>&1 && echo "  - [OK]: mkdir -p $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: mkdir -p $(VIEWMD_CONFIG_DIR)"
 	@cp -r $(SRC_DATA_DIR) $(VIEWMD_CONFIG_DIR) && echo "  - [OK]: cp -r $(SRC_DATA_DIR) -> $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: cp -r $(SRC_DATA_DIR) -> $(VIEWMD_CONFIG_DIR)"
 	@mkdir -p $(HOME)/.bin > /dev/null 2>&1 && echo "  - [OK]: mkdir -p $(HOME_BIN_DIR)" || echo "  - [FAILED]: mkdir -p $(HOME_BIN_DIR)"
 	@cp $(TARGET) $(HOME)/.bin && echo "  - [OK]: cp $(TARGET) -> $(HOME_BIN_DIR)" || echo "  - [FAILED]: cp $(TARGET) -> $(HOME_BIN_DIR)"
+	@echo
 
-install-dependencies:
-	@echo "[1: INSTALLING DEPENDENCIES] ======================"
+apt-update:
+	@echo "[1: UPDATING APT] ==================================================="
 	@sudo apt update > /dev/null 2>&1 && echo "  - [OK]: apt update" || echo "  - [FAILED]: apt update"
+	@echo
+
+install-dependencies: apt-update
+	@echo "[2: INSTALLING DEPENDENCIES] ========================================"
+	@sudo apt install -y gcc > /dev/null 2>&1 && echo "  - [OK]: gcc " || echo "  - [FAILED] gcc"
 	@sudo apt install -y pkg-config > /dev/null 2>&1 && echo "  - [OK]: pkg-config " || echo "  - [FAILED] pkg-config"
 	@sudo apt install -y libgtk-3-dev > /dev/null 2>&1 && echo "  - [OK]: libgtk-3-dev " || echo "  - [FAILED] libgtk-3-dev"
 	@sudo apt install -y libwebkit2gtk-4.1-dev > /dev/null 2>&1 && echo "  - [OK]: libwebkit2gtk-4.1-dev " || echo "  - [FAILED] libwebkit2gtk-4.1-dev"
-	@sudo apt install -y gcc > /dev/null 2>&1 && echo "  - [OK]: gcc " || echo "  - [FAILED] gcc"
+	@sudo apt install -y pandoc > /dev/null 2>&1 && echo "  - [OK]: pandoc " || echo "  - [FAILED] pandoc"
+	@echo
 
 uninstall:
-	@echo "[2: UNINSTALLING $(TARGET)] ======================="
-	@rm -r $(VIEWMD_CONFIG_DIR) > /dev/null 2>&1 && echo "  - [OK]: rm -r $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: rm -r $(VIEWMD_CONFIG_DIR)"
+	@echo "[UNINSTALLING $(TARGET)] ============================================"
 	@sudo rm $(USR_LOCAL_BIN_DIR)/$(TARGET) > /dev/null 2>&1 && echo "  - [OK]: rm $(USR_LOCAL_BIN_DIR)/$(TARGET)" || echo "  - [FAILED]: rm $(USR_LOCAL_BIN_DIR)/$(TARGET)"
+	@rm -r $(VIEWMD_CONFIG_DIR) > /dev/null 2>&1 && echo "  - [OK]: rm -r $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: rm -r $(VIEWMD_CONFIG_DIR)"
+	@echo
+
+uninstall-noroot:
+	@echo "[UNINSTALLING $(TARGET)] ============================================"
+	@rm -r $(VIEWMD_CONFIG_DIR) > /dev/null 2>&1 && echo "  - [OK]: rm -r $(VIEWMD_CONFIG_DIR)" || echo "  - [FAILED]: rm -r $(VIEWMD_CONFIG_DIR)"
 	@sudo rm $(HOME_BIN_DIR)/$(TARGET) > /dev/null 2>&1 && echo "  - [OK]: rm $(HOME_BIN_DIR)/$(TARGET)" || echo "  - [FAILED]: rm $(HOME_BIN_DIR)/$(TARGET)"
+	@echo
 
 $(BUILT_SRC): $(G_RSC) $(UI)
 	$(GLIB_COMPILE_RESOURCES) $(G_RSC) --target=$@ --sourcedir=$(UI_DIR) --generate-source

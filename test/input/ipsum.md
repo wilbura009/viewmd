@@ -48,11 +48,13 @@ This is **bold** and this is *italic*.
 
 Inline `code` and code blocks:
 
-```python
-def greet(name):
-    print(f"Hello, {name}!")
-
-greet("World")
+```c
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+  printf("Hello World!\n");
+  return 0;
+}
 ```
 
 ## Tables

@@ -96,8 +96,37 @@ code {
   font-family: var(--code-font-family);
   background: var(--source-code-background);
   font-size: 14px;
-  padding: 4px;
+  padding: 3px;
+  margin: 3px;
   border-radius: 4px;
+}
+
+pre > code.sourceCode {
+  display: block;
+  overflow-x: auto;
+  padding: 8px;
+  background: var(--source-code-background);
+  border-radius: 4px;
+}
+
+table {
+  border: 1px solid;
+  border-collapse: collapse;
+}
+
+th, tr, td {
+  border: 1px solid;
+  text-align: left;
+  padding: 10px !important;
+}
+
+ul, ol {
+  margin: 8px;
+}
+
+li {
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 img {
