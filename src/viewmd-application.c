@@ -18,8 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-//#include "config.h"
-
 #include "viewmd-application.h"
 #include "viewmd-window.h"
 
@@ -89,57 +87,7 @@ viewmd_application_class_init (ViewmdApplicationClass *klass)
   app_class->open = viewmd_application_open;
 }
 
-/*
-static void
-viewmd_application_about_action (GSimpleAction *action,
-                                      GVariant      *parameter,
-                                      gpointer       user_data)
-{
-  static const char *authors[] = {"wb", NULL};
-  ViewmdApplication *self = user_data;
-  GtkWindow *window = NULL;
-
-  g_assert (VIEWMD_IS_APPLICATION (self));
-
-  window = gtk_application_get_active_window (GTK_APPLICATION (self));
-
-  gtk_show_about_dialog (window,
-                         "program-name", "viewmd",
-                         "logo-icon-name", "org.gnome.viewmd",
-                         "authors", authors,
-                         "version", "0.1.0",
-                         "copyright", "© 2023 wb",
-                         NULL);
-}
-
-static void
-viewmd_application_quit_action (GSimpleAction *action,
-                                     GVariant      *parameter,
-                                     gpointer       user_data)
-{
-  ViewmdApplication *self = user_data;
-
-  g_assert (VIEWMD_IS_APPLICATION (self));
-
-  g_application_quit (G_APPLICATION (self));
-}
-
-static const GActionEntry app_actions[] = {
-  { "quit", viewmd_application_quit_action },
-  { "about", viewmd_application_about_action },
-};
-*/
-
 static void
 viewmd_application_init (ViewmdApplication *self)
 {
-  /*
-  g_action_map_add_action_entries (G_ACTION_MAP (self),
-                                   app_actions,
-                                   G_N_ELEMENTS (app_actions),
-                                   self);
-  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
-                                         "app.quit",
-                                         (const char *[]) { "<primary>q", NULL });
-                                         */
 }
