@@ -2,5 +2,6 @@
 <gresources>
   <gresource prefix="/org/gnome/viewmd">
     <file>viewmd-window.ui</file>
+    <file>viewmd-window-webkit.css</file>
   </gresource>
 </gresources>

@@ -1,0 +1,6 @@
+data/org.gnome.viewmd.desktop.in
+data/org.gnome.viewmd.appdata.xml.in
+data/org.gnome.viewmd.gschema.xml
+src/main.c
+src/viewmd-window.c
+src/viewmd-window.ui

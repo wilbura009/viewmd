@@ -19,6 +19,7 @@
 //#include "viewmd-config.h"
 #include "viewmd-window.h"
 #include "webkit2/webkit2.h"
+#include <stdio.h>
 
 struct _ViewmdWindow
 {
@@ -31,8 +32,7 @@ static void
 viewmd_window_class_init (ViewmdWindowClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-
-  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/viewmd/viewmd-window.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/viewmd/viewmd-window.ui" );
 }
 
 gchar *convert_md_to_html (gchar *path_md)
@@ -42,44 +42,63 @@ gchar *convert_md_to_html (gchar *path_md)
   gchar *highlighting = g_strdup_printf ("--highlight-style=%s", "zenburn");
   gchar *command = g_strdup_printf ("pandoc -s %s %s -t html",highlighting, path_md);
   g_spawn_command_line_sync (command, &html_content, NULL, NULL, NULL);
+
+  g_free (highlighting);
   g_free (command);
+
   return html_content;
 }
 
 // Connect to the 'changed' signal of the file monitor
 static void
-file_changed (GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonitorEvent event_type, gpointer user_data)
+file_changed (GFileMonitor *monitor,
+              GFile *file,
+              GFile *other_file,
+              GFileMonitorEvent event_type,
+              gpointer user_data)
 {
   if (event_type == G_FILE_MONITOR_EVENT_CHANGED)
   {
+    gchar *css_uri = "resource:///org/gnome/viewmd/viewmd-window-webkit.css";
     gchar *path = g_file_get_path(file);
     gchar *html_content;
     html_content = convert_md_to_html (g_file_get_path (file));
 
-    // Load the html content into the webview but first remove the old webview
-    gtk_container_remove(GTK_CONTAINER(user_data), gtk_bin_get_child(GTK_BIN(user_data)));
+    WebKitSettings *settings = webkit_settings_new_with_settings(
+        "enable-developer-extras", TRUE, NULL,
+        "auto-load-images", TRUE, NULL);
+
+    gtk_container_remove(GTK_CONTAINER(user_data),
+                         gtk_bin_get_child(GTK_BIN(user_data)));
+
+    GFile *css_gfile = g_file_new_for_uri (css_uri);
+    gchar *css_content;
+    g_file_load_contents (css_gfile, NULL, &css_content, NULL, NULL, NULL);
 
     WebKitUserContentManager *manager = webkit_user_content_manager_new ();
     WebKitUserStyleSheet *style_sheet;
 
-    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/data/webkit.css", g_get_home_dir ());
-    GFile *file_css = g_file_new_for_path (path_css);
-    gchar *css_content;
-    g_file_load_contents (file_css, NULL, &css_content, NULL, NULL, NULL);
-
-    style_sheet = webkit_user_style_sheet_new (css_content, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+    style_sheet = webkit_user_style_sheet_new (css_content,
+                                               WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                                               WEBKIT_USER_STYLE_LEVEL_USER,
+                                               NULL,
+                                               NULL);
 
     webkit_user_content_manager_add_style_sheet (manager, style_sheet);
 
-    // Load the html content into the webview
-    WebKitWebView *webView = WEBKIT_WEB_VIEW (webkit_web_view_new_with_user_content_manager (manager));
-    webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView)), TRUE);
+    WebKitWebView *webView;
+    webView = WEBKIT_WEB_VIEW (webkit_web_view_new_with_user_content_manager (manager));
+
+    webkit_web_view_set_settings (webView, settings);
     webkit_web_view_load_html (webView, html_content, NULL);
     gtk_container_add(GTK_CONTAINER(user_data), GTK_WIDGET(webView));
     gtk_widget_show_all (GTK_WIDGET (user_data));
-    g_free(path);
-    g_free(html_content);
-    //g_print("G_FILE_MONITOR_EVENT_CHANGED.event_type: %d\n", event_type);
+
+    g_free (html_content);
+    g_free (css_content);
+    g_object_unref (css_gfile);
+    g_object_unref (settings);
+    g_object_unref (manager);
   }
 }
 
@@ -92,30 +111,34 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
   {
     gchar *html_content;
     html_content = convert_md_to_html (path);
-    WebKitSettings *settings = webkit_settings_new_with_settings("enable-developer-extras", TRUE, NULL,
+    WebKitSettings *settings = webkit_settings_new_with_settings(
+        "enable-developer-extras", TRUE, NULL,
         "auto-load-images", TRUE, NULL);
+
+    gchar *css_uri = "resource:///org/gnome/viewmd/viewmd-window-webkit.css";
+    GFile *css_gfile = g_file_new_for_uri (css_uri);
+    gchar *css_content;
+    g_file_load_contents (css_gfile, NULL, &css_content, NULL, NULL, NULL);
 
     WebKitUserContentManager *manager = webkit_user_content_manager_new ();
     WebKitUserStyleSheet *style_sheet;
 
-    // Get the path to the .css file located in the user's home directory
-    gchar *path_css = g_strdup_printf ("%s/.config/viewmd/data/webkit.css", g_get_home_dir ());
-    GFile *file_css = g_file_new_for_path (path_css);
-    gchar *css_content;
-    g_file_load_contents (file_css, NULL, &css_content, NULL, NULL, NULL);
-
-    style_sheet = webkit_user_style_sheet_new (css_content, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
+    style_sheet = webkit_user_style_sheet_new (css_content,
+                                               WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+                                               WEBKIT_USER_STYLE_LEVEL_USER,
+                                               NULL,
+                                               NULL);
 
     webkit_user_content_manager_add_style_sheet (manager, style_sheet);
 
     // Load the html content into the webview
-    WebKitWebView *webView = WEBKIT_WEB_VIEW (webkit_web_view_new_with_user_content_manager (manager));
+    WebKitWebView *webView;
+    webView = WEBKIT_WEB_VIEW (webkit_web_view_new_with_user_content_manager (manager));
 
     // Set the webview settings
     webkit_web_view_set_settings (webView, settings);
     webkit_web_view_load_html (webView, html_content, NULL);
     gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(webView));
-
     gtk_widget_show_all (GTK_WIDGET (win));
 
     // Watch the file for changes
@@ -123,6 +146,12 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
     monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
     g_signal_connect (monitor, "changed", G_CALLBACK (file_changed), win);
     printf ("Watching file: %s\n", path);
+
+    g_free (html_content);
+    g_free (css_content);
+    g_object_unref (css_gfile);
+    g_object_unref (settings);
+    g_object_unref (manager);
   }
   else
   {
