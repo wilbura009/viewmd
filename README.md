@@ -5,7 +5,7 @@ description: The simple markdown previewer.
 
 # viewmd
 
-<img src="docs/img/viewmd-preview.png" alt="viewmd-preview" width="60%"/>
+<img src="docs/img/viewmd-preview.png" alt="viewmd-preview" width="75%"/>
 
 ## Installation
 
