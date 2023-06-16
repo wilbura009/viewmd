@@ -44,13 +44,16 @@ Note: The makefile uses `apt` to install dependencies.
 The makefile includes rules for a few types of installations.
 
 * `make install-dependencies` -- Install only the dependencies, nothing else.
-* `make install`              -- Install dependencies, compile project, and place the binary in `/usr/local/bin/`
-* `make install-noroot`       -- Install dependencies, compile project, and place the binary in `$(HOME)/.bin`
+* `make install` -- Install dependencies, compile project, and
+  place the binary in `/usr/local/bin/`
+* `make install-home` -- Install dependencies, compile project, and
+  place the binary in `$(HOME)/.bin`
 
 ## Uninstalling
 
-* `make uninstall` -- Remove `/usr/local/bin/viewmd` and relevant .config files.
-* `make uninstall-noroot` -- Remove `$(HOME)/.bin/viewmd` and relevant .config files.
+* `make uninstall` -- Remove `/usr/local/bin/viewmd`.
+* `make uninstall-home` -- Remove `$(HOME)/.bin/viewmd`.
+* `make uninstall-all` -- run both previous make rules.
 
 ## Usage
 
