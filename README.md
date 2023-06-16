@@ -1,6 +1,7 @@
 ---
 name: viewmd
 description: The simple markdown previewer.
+version: 1.0.0
 ---
 
 # viewmd

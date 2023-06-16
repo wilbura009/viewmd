@@ -3,3 +3,4 @@ viewmd
 .cache
 src/*.o
 src/resources.c
+.flatpak-builder

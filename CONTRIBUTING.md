@@ -1,27 +1,33 @@
 # Contributing to viewmd
 
-This project is primarily written in C. GUI elements are written in XML. You don't have to be an expert in C to contribute. Find a simple bug to work on and send a merge request.
+This project is primarily written in C. GUI elements are written in XML. You
+don't You don't have to be an expert in C to contribute. Find a simple bug to
+work and send a merge request. 
 
 ## Filing a bug
 
-Please file bugs for issues, enhancements and features at the [bug tracker](https://github.com/wilbura009/viewmd/issues).
+Please file bugs for issues, enhancements and features at the
+[bug tracker](https://github.com/wilbura009/viewmd/issues).
 
-Create a Merge request and I’d be happy to review your patch and help you get it merged.
+Create a Merge request and I’d be happy to review your patch and help you get it
+merged.
 
 ## Coding style
 
-All contributions to viewmd should follow its coding style. The style can mostly be inferred from the code. 
+All contributions to viewmd should follow its coding style. The style can mostly
+be inferred from the code. 
 
 * Code should be indented with spaces only - **No tabs ever**
 * Use 2 space for each indentation level
 
-This project will try to follow GTK coding style (mostly). Read it online at https://gitlab.gnome.org/GNOME/gtk/-/blob/main/docs/CODING-STYLE.md
+This project will try to follow GTK coding style (mostly). Read it online at
+https://gitlab.gnome.org/GNOME/gtk/-/blob/main/docs/CODING-STYLE.md
 
 The following exceptions apply:
 
-1. Maximum line width is 100 characters.
-2. Header files should use `#pragma once` as include guard.
-3. Include the full URL to the bug report in commit messages so that they can be accessed from local git log (or mirror repositories).
+1. Header files should use `#pragma once` as include guard.
+2. Include the full URL to the bug report in commit messages so that they can be
+   accessed from local git log (or mirror repositories).
 
 ```txt
 settings: Fix a memory leak
@@ -60,13 +66,17 @@ The commit type can include the following:
 | `build`    | changes that affect the build system or external dependencies                                                                              |
 | `revert`   | reverts a previous commit                                                                                                                  |
 
-The commit type subject line should be all lowercase with a character limit to encourage succinct descriptions.
+The commit type subject line should be all lowercase with a character limit to
+encourage succinct descriptions.
 
-The `[optional body]` should be used to provide further detail that cannot fit within the character limitations of the subject line description.
+The `[optional body]` should be used to provide further detail that cannot fit
+within the character limitations of the subject line description.
 
-It is also a good location to utilize `BREAKING CHANGE: description to note the reason for a breaking change within the commit.`
+It is also a good location to utilize
+`BREAKING CHANGE: description to note thereason for a breaking change within the commit.`
 
-The `[optional footer]`. We use the footer to link the JIRA story that would be closed with these changes for example: `Closes D2IQ-[JIRA #]`.
+The `[optional footer]`. We use the footer to link the JIRA story that would be
+closed with these changes for example: `Closes D2IQ-[JIRA #]`.
 
 ------------------------------
 

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=viewmd
+Exec=viewmd
+Icon=org.gnome.viewmd
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
