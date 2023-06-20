@@ -41,8 +41,16 @@ This is **bold** and this is *italic*.
 
 ## Links and Images
 
-![doge](//docs/img/doge.png)
-<img src="https://www.example.com/images/dinosaur.jpg" alt="Dinosaur" />
+Local File
+
+![doge](img/doge.png)
+
+----------------------------------------------------------------------
+
+Web URL
+
+![picsum](https://picsum.photos/id/237/200/300)
+
 
 ## Code
 
