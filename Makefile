@@ -38,7 +38,7 @@ HOME_BIN_DIR = $(HOME)/.bin
 USR_LOCAL_BIN_DIR = /usr/local/bin
 
 # ======== Test Variables ========================
-TEST_INPUT = test/input/ipsum.md
+TEST_INPUT = tests/input/ipsum.md
 # ================================================
 
 .PHONY: all bear run \
