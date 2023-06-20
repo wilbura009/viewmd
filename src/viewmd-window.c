@@ -18,6 +18,7 @@
 #include "viewmd-window.h"
 #include "webkit2/webkit2.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 struct _ViewmdWindow
 {
@@ -33,11 +34,36 @@ viewmd_window_class_init (ViewmdWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/viewmd/viewmd-window.ui" );
 }
 
-gchar *convert_md_to_html (gchar *path_md)
+static gchar*
+replace_html_img_tag_with_file_url(gchar *path_md, gchar *html_content)
+{
+  gchar *path_md_dir = g_path_get_dirname (path_md);
+
+  GRegex *regex_img_tag_all;
+  GMatchInfo *match_info;
+
+  // Match not http - this also covers the <p> wraps 
+  gchar *img_tag_pattern = "<img src=\"(?!http)(.*)\" alt=\"(.*)\".*";
+  gchar *img_tag_replacement = g_strdup_printf(
+      "<img src=\"file:///%s/\\1\" alt=\"\\2\" />", path_md_dir);
+
+  regex_img_tag_all = g_regex_new (img_tag_pattern, 0, 0, NULL);
+
+  html_content = g_regex_replace (regex_img_tag_all, html_content, -1, 0,
+                                  img_tag_replacement, 0, NULL);
+
+  g_regex_unref (regex_img_tag_all);
+  g_free (img_tag_replacement);
+
+  return html_content;
+}
+
+static gchar*
+convert_md_to_html (gchar *path_md)
 {
   gchar *html_content;
   gchar *highlighting = g_strdup_printf ("--highlight-style=%s", "zenburn");
-  gchar *command = g_strdup_printf ("pandoc -s %s %s -t html",highlighting, path_md);
+  gchar *command = g_strdup_printf ("pandoc -s %s %s -t html", highlighting, path_md);
   g_spawn_command_line_sync (command, &html_content, NULL, NULL, NULL);
 
   g_free (highlighting);
@@ -100,6 +126,28 @@ file_changed (GFileMonitor *monitor,
 }
 
 void
+print_properties(GObject *object)
+{
+  GParamSpec **properties;
+  guint n_properties, i;
+
+  properties = g_object_class_list_properties(G_OBJECT_GET_CLASS(object), &n_properties);
+  for (i = 0; i < n_properties; i++)
+  {
+    GParamSpec *property = properties[i];
+    const gchar *name = g_param_spec_get_name(property);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(property));
+    g_object_get_property(object, name, &value);
+    gchar *str_value = g_strdup_value_contents(&value);
+    g_print("%s: %s\n", name, str_value);
+    g_free(str_value);
+    g_value_unset(&value);
+  }
+  g_free(properties);
+}
+
+void
 viewmd_window_open(ViewmdWindow *win, GFile *file)
 {
   gchar *path = g_file_get_path (file);
@@ -108,10 +156,17 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
   {
     gchar *html_content;
     html_content = convert_md_to_html (path);
-    WebKitSettings *settings = webkit_settings_new_with_settings(
-        "enable-developer-extras", TRUE, NULL,
-        "allow-file-access-from-file-urls", TRUE, NULL,
-        "auto-load-images", TRUE, NULL);
+    html_content = replace_html_img_tag_with_file_url(path, html_content);
+    g_print ("%s\n", html_content);
+
+    WebKitSettings *settings = webkit_settings_new();
+    webkit_settings_set_enable_developer_extras(settings, TRUE);
+    webkit_settings_set_auto_load_images(settings, TRUE);
+    webkit_settings_set_allow_file_access_from_file_urls(settings, TRUE);
+    webkit_settings_set_allow_universal_access_from_file_urls(settings,TRUE);
+    webkit_settings_set_allow_top_navigation_to_data_urls(settings, TRUE);
+
+    //print_properties(G_OBJECT(settings));
 
     gchar *css_uri = "resource:///org/gnome/viewmd/viewmd-window-webkit.css";
     GFile *css_gfile = g_file_new_for_uri (css_uri);
@@ -135,7 +190,7 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
 
     // Set the webview settings
     webkit_web_view_set_settings (webView, settings);
-    webkit_web_view_load_html (webView, html_content, NULL);
+    webkit_web_view_load_html (webView, html_content, "file:///");
     gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(webView));
     gtk_widget_show_all (GTK_WIDGET (win));
 

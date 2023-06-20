@@ -41,9 +41,16 @@ This is **bold** and this is *italic*.
 
 ## Links and Images
 
+Local File
+
 ![doge](img/doge.png)
 
+----------------------------------------------------------------------
+
+Web URL
+
 ![picsum](https://picsum.photos/id/237/200/300)
+
 
 ## Code
 
