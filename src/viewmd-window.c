@@ -35,7 +35,6 @@ viewmd_window_class_init (ViewmdWindowClass *klass)
 
 gchar *convert_md_to_html (gchar *path_md)
 {
-  //pandoc -s --highlight=zenburn -c src/css/webkit.css src/input/ipsum.md -t html -o gtk.html;
   gchar *html_content;
   gchar *highlighting = g_strdup_printf ("--highlight-style=%s", "zenburn");
   gchar *command = g_strdup_printf ("pandoc -s %s %s -t html",highlighting, path_md);
@@ -111,6 +110,7 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
     html_content = convert_md_to_html (path);
     WebKitSettings *settings = webkit_settings_new_with_settings(
         "enable-developer-extras", TRUE, NULL,
+        "allow-file-access-from-file-urls", TRUE, NULL,
         "auto-load-images", TRUE, NULL);
 
     gchar *css_uri = "resource:///org/gnome/viewmd/viewmd-window-webkit.css";
