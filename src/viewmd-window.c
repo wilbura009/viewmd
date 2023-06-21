@@ -34,6 +34,28 @@ viewmd_window_class_init (ViewmdWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/viewmd/viewmd-window.ui" );
 }
 
+static void
+print_properties(GObject *object)
+{
+  GParamSpec **properties;
+  guint n_properties, i;
+
+  properties = g_object_class_list_properties(G_OBJECT_GET_CLASS(object), &n_properties);
+  for (i = 0; i < n_properties; i++)
+  {
+    GParamSpec *property = properties[i];
+    const gchar *name = g_param_spec_get_name(property);
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(property));
+    g_object_get_property(object, name, &value);
+    gchar *str_value = g_strdup_value_contents(&value);
+    g_print("%s: %s\n", name, str_value);
+    g_free(str_value);
+    g_value_unset(&value);
+  }
+  g_free(properties);
+}
+
 static gchar*
 replace_html_img_tag_with_file_url(gchar *path_md, gchar *html_content)
 {
@@ -61,11 +83,19 @@ replace_html_img_tag_with_file_url(gchar *path_md, gchar *html_content)
 static gchar*
 convert_md_to_html (gchar *path_md)
 {
-  gchar *html_content;
+  gchar *path_md_basename = g_path_get_basename (path_md);
+
+  gchar *shift_lvl_heading = g_strdup_printf ("--shift-heading-level-by=-1");
+  gchar *meta_title = g_strdup_printf ("--metadata title=%s", path_md_basename);
   gchar *highlighting = g_strdup_printf ("--highlight-style=%s", "zenburn");
-  gchar *command = g_strdup_printf ("pandoc -s %s %s -t html", highlighting, path_md);
+
+  gchar *command = g_strdup_printf ("pandoc -s %s %s %s %s -t html", shift_lvl_heading, highlighting, meta_title, path_md);
+  gchar *html_content;
   g_spawn_command_line_sync (command, &html_content, NULL, NULL, NULL);
 
+  g_free (path_md_basename);
+  g_free (shift_lvl_heading);
+  g_free (meta_title);
   g_free (highlighting);
   g_free (command);
 
@@ -126,28 +156,6 @@ file_changed (GFileMonitor *monitor,
 }
 
 void
-print_properties(GObject *object)
-{
-  GParamSpec **properties;
-  guint n_properties, i;
-
-  properties = g_object_class_list_properties(G_OBJECT_GET_CLASS(object), &n_properties);
-  for (i = 0; i < n_properties; i++)
-  {
-    GParamSpec *property = properties[i];
-    const gchar *name = g_param_spec_get_name(property);
-    GValue value = G_VALUE_INIT;
-    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(property));
-    g_object_get_property(object, name, &value);
-    gchar *str_value = g_strdup_value_contents(&value);
-    g_print("%s: %s\n", name, str_value);
-    g_free(str_value);
-    g_value_unset(&value);
-  }
-  g_free(properties);
-}
-
-void
 viewmd_window_open(ViewmdWindow *win, GFile *file)
 {
   gchar *path = g_file_get_path (file);
@@ -157,7 +165,6 @@ viewmd_window_open(ViewmdWindow *win, GFile *file)
     gchar *html_content;
     html_content = convert_md_to_html (path);
     html_content = replace_html_img_tag_with_file_url(path, html_content);
-    g_print ("%s\n", html_content);
 
     WebKitSettings *settings = webkit_settings_new();
     webkit_settings_set_enable_developer_extras(settings, TRUE);
@@ -219,4 +226,5 @@ static void
 viewmd_window_init (ViewmdWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+  //g_print ("[INFO]: ViewmdWindow initialized\n");
 }

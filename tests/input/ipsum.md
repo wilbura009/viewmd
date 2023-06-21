@@ -6,9 +6,10 @@ This is a simple example of **Markdown** syntax. Markdown is a lightweight marku
 
 You can create different levels of headers by using hashtags (#). The number of hashtags determines the header level. For example:
 
-# Heading 1
-## Heading 2
-### Heading 3
+### H3
+#### H4
+##### H5
+###### H6
 
 ## Emphasis
 
